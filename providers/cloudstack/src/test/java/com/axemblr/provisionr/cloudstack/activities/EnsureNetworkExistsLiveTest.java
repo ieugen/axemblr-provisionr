@@ -25,6 +25,7 @@ import com.axemblr.provisionr.test.ProcessVariablesCollector;
 import java.util.NoSuchElementException;
 import org.activiti.engine.delegate.DelegateExecution;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.fail;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.features.NetworkClient;
@@ -99,6 +100,18 @@ public class EnsureNetworkExistsLiveTest extends CloudStackActivityLiveTest<Ensu
         when(execution.getProcessBusinessKey()).thenReturn(BUSINESS_KEY);
         network = Networks.getByName(context.getApi(), networkName);
         assertThat(network.getId()).isEqualTo(networkId);
+
+        LOG.info("Try to delete network " + networkName);
+        DeleteNetwork deleteNetworkActivity = new DeleteNetwork();
+        when(execution.getVariable(ProcessVariables.NETWORK_ID)).thenReturn(networkId);
+        deleteNetworkActivity.execute(context.getApi(), pool, execution);
+
+        try {
+            network = Networks.getByName(context.getApi(), networkName);
+            fail("Network not deleted");
+        } catch (NoSuchElementException e) {
+
+        }
     }
 
     @Test
