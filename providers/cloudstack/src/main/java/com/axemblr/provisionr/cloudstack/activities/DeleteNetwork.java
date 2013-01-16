@@ -17,6 +17,7 @@
 package com.axemblr.provisionr.cloudstack.activities;
 
 import com.axemblr.provisionr.api.pool.Pool;
+import com.axemblr.provisionr.cloudstack.NetworkOptions;
 import com.axemblr.provisionr.cloudstack.ProcessVariables;
 import com.google.common.base.Throwables;
 import java.util.concurrent.TimeUnit;
@@ -32,14 +33,20 @@ public class DeleteNetwork extends CloudStackActivity {
 
     @Override
     public void execute(CloudStackClient cloudStackClient, Pool pool, DelegateExecution execution) {
-        final String networkId = (String) execution.getVariable(ProcessVariables.NETWORK_ID);
-        if (networkId != null) {
-            LOG.info("Deleting network with id {}", networkId);
-            final String deleteJobId = cloudStackClient.getNetworkClient().deleteNetwork(networkId);
-            LOG.info("Wait for network {} to be deleted", networkId);
-            waitForJobToFinish(cloudStackClient, deleteJobId);
+        final String existingNetworkId = pool.getNetwork().getOption(NetworkOptions.EXISTING_NETWORK_ID);
+        if (existingNetworkId == null) {
+            final String networkId = (String) execution.getVariable(ProcessVariables.NETWORK_ID);
+            LOG.info("Network with id {} was created, deleting", networkId);
+            if (networkId != null) {
+                LOG.info("Deleting network with id {}", networkId);
+                final String deleteJobId = cloudStackClient.getNetworkClient().deleteNetwork(networkId);
+                LOG.info("Wait for network {} to be deleted", networkId);
+                waitForJobToFinish(cloudStackClient, deleteJobId);
+            } else {
+                LOG.info("No network defined in process variable {}", ProcessVariables.NETWORK_ID);
+            }
         } else {
-            LOG.info("No network defined in process variable {}", ProcessVariables.NETWORK_ID);
+            LOG.info("Network with id {} was provided, not deleting", existingNetworkId);
         }
     }
 

@@ -40,10 +40,10 @@ public class EnsureNetworkExists extends CloudStackActivity {
             LOG.warn("Network process variable ({}) will be overwritten!", ProcessVariables.NETWORK_ID);
         }
         Network network;
-        final String existingNetwork = pool.getNetwork().getOption(NetworkOptions.EXISTING_NETWORK_ID);
-        if (existingNetwork != null) {
-            network = checkNotNull(cloudStackClient.getNetworkClient().getNetwork(existingNetwork),
-                "Network with id " + existingNetwork + " does not exist");
+        final String existingNetworkId = pool.getNetwork().getOption(NetworkOptions.EXISTING_NETWORK_ID);
+        if (existingNetworkId != null) {
+            network = checkNotNull(cloudStackClient.getNetworkClient().getNetwork(existingNetworkId),
+                "Network with id {} does not exist", existingNetworkId.toString());
         } else {
             final String networkName = Networks.formatNameFromBusinessKey(execution.getProcessBusinessKey());
             final String zoneId = pool.getProvider().getOption(ProviderOptions.ZONE_ID);

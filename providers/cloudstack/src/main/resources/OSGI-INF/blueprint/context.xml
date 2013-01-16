@@ -78,6 +78,17 @@
     <service ref="cloudstack_deleteKeyPair" auto-export="interfaces">
     </service>
 
+    <bean id="cloudstack_generateMachineIds"
+          class="com.axemblr.provisionr.cloudstack.activities.GenerateListOfMachineIds"/>
+    <service ref="cloudstack_generateMachineIds" auto-export="interfaces"/>
+
+    <bean id="cloudstack_createGateway" class="com.axemblr.provisionr.cloudstack.activities.CreateGateway"/>
+    <service ref="cloudstack_createGateway" auto-export="interfaces"/>
+
+    <bean id="cloudstack_setupStaticNatOnGateway"
+          class="com.axemblr.provisionr.cloudstack.activities.SetupStaticNatOnGateway"/>
+    <service ref="cloudstack_setupStaticNatOnGateway" auto-export="interfaces"/>
+
     <bean id="cloudstack_runInstances" class="com.axemblr.provisionr.cloudstack.activities.RunInstances"/>
     <service ref="cloudstack_runInstances" auto-export="interfaces"/>
 

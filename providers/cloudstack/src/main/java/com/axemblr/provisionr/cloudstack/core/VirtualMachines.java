@@ -80,13 +80,12 @@ public class VirtualMachines {
                 break;
             }
         }
-
         switch (machine.getState()) {
             case RUNNING:
                 LOG.info("VM {} is running, as expected", vmName);
                 break;
             default:
-                throw new IllegalStateException("VM " + machine + "is not in RUNNING state");
+                LOG.warn("VM is not in RUNNING state: {}", machine);
         }
     }
 

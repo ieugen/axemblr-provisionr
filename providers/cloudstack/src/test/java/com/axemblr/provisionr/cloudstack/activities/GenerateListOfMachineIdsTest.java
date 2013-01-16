@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.UUID;
 import org.activiti.engine.delegate.DelegateExecution;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.fail;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
@@ -63,7 +64,6 @@ public class GenerateListOfMachineIdsTest {
         System.out.println(firstId);
         final String lastId = Iterables.getLast(machineIds);
         assertThat(lastId).startsWith("host-").contains(BUSINESS_KEY).endsWith(Integer.toString(EXPECTED_SIZE));
-        System.out.println(lastId);
     }
 
     @Test
@@ -81,5 +81,25 @@ public class GenerateListOfMachineIdsTest {
             .endsWith(Integer.toString(EXPECTED_SIZE));
 
         assertThat(gateway).isEqualTo(firstId);
+    }
+
+    @Test
+    public void testGenerateListOfIdsChecksForNullBusinessKey() throws Exception {
+        try {
+            GenerateListOfMachineIds.generateIdsFromBusinessKey(null, -1);
+            fail("must have thrown an exception");
+        } catch (Exception e) {
+            assertThat(e instanceof NullPointerException).isTrue();
+        }
+    }
+
+    @Test
+    public void testGenerateListOfIdsExpectsPositiveInteger() throws Exception {
+        try {
+            GenerateListOfMachineIds.generateIdsFromBusinessKey("anything, really", 0);
+            fail("must have thrown an exception");
+        } catch (Exception e) {
+            assertThat(e instanceof IllegalArgumentException).isTrue();
+        }
     }
 }

@@ -20,6 +20,8 @@ import com.axemblr.provisionr.api.pool.Pool;
 import com.axemblr.provisionr.cloudstack.ProcessVariables;
 import com.axemblr.provisionr.core.CoreProcessVariables;
 import com.google.common.annotations.VisibleForTesting;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.activiti.engine.delegate.DelegateExecution;
@@ -34,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class GenerateListOfMachineIds extends CloudStackActivity {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenerateListOfMachineIds.class);
-    private final String machineIdFormat = "host-%s-%03d";
+    private static final String machineIdFormat = "host-%s-%03d";
 
     @Override
     public void execute(CloudStackClient cloudStackClient, Pool pool, DelegateExecution execution) {
@@ -57,7 +59,9 @@ public class GenerateListOfMachineIds extends CloudStackActivity {
     }
 
     @VisibleForTesting
-    protected List<String> generateIdsFromBusinessKey(String processBusinessKey, int expectedSize) {
+    protected static List<String> generateIdsFromBusinessKey(String processBusinessKey, int expectedSize) {
+        checkNotNull(processBusinessKey, "business key is null");
+        checkArgument(expectedSize >= 1, "expecting a value greater than 1");
         List<String> machineIds = Lists.newArrayList();
         for (int i = 1; i <= expectedSize; i++) {
             machineIds.add(String.format(machineIdFormat, processBusinessKey, i));
