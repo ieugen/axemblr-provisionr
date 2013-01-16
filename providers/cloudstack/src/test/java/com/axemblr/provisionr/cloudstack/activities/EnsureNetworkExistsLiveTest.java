@@ -110,7 +110,6 @@ public class EnsureNetworkExistsLiveTest extends CloudStackActivityLiveTest<Ensu
             network = Networks.getByName(context.getApi(), networkName);
             fail("Network not deleted");
         } catch (NoSuchElementException e) {
-
         }
     }
 
